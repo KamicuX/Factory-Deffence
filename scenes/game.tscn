@@ -1,0 +1,90 @@
+[gd_scene format=3 uid="uid://3t8thgoqsw05"]
+
+[ext_resource type="Script" uid="uid://cfd6gkupr15hy" path="res://scripts/Game.cs" id="1_yqjtg"]
+[ext_resource type="Script" uid="uid://cnkrachya0tme" path="res://scripts/Grid.cs" id="2_lnu2h"]
+[ext_resource type="Script" uid="uid://bk6bkeo7kvew6" path="res://scripts/Camera2D.cs" id="3_lnu2h"]
+[ext_resource type="Script" uid="uid://cvu583rkyxhpo" path="res://scripts/BuildMenu.cs" id="4_lbhrr"]
+[ext_resource type="Script" uid="uid://c07imia0lwy74" path="res://scripts/HQ.cs" id="5_iywne"]
+[ext_resource type="Script" uid="uid://c504jqporropn" path="res://scripts/Enemy.cs" id="6_p57ef"]
+
+[node name="Game" type="Node2D" unique_id=85277427]
+script = ExtResource("1_yqjtg")
+
+[node name="Grid" type="Node2D" parent="." unique_id=314063560]
+script = ExtResource("2_lnu2h")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1546057218]
+position = Vector2(577, 323)
+script = ExtResource("3_lnu2h")
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=727854306]
+
+[node name="BuildMenu" type="Panel" parent="UI" unique_id=1757427151]
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -300.0
+grow_horizontal = 0
+grow_vertical = 2
+script = ExtResource("4_lbhrr")
+
+[node name="CategoryBar" type="HBoxContainer" parent="UI/BuildMenu" unique_id=1697779976]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 156.0
+offset_right = 286.0
+offset_bottom = 184.0
+
+[node name="ProductionButton" type="Button" parent="UI/BuildMenu/CategoryBar" unique_id=1856487352]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DefenseButton" type="Button" parent="UI/BuildMenu/CategoryBar" unique_id=1415081749]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Minimap" type="Panel" parent="UI/BuildMenu" unique_id=582811770]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -289.0
+offset_top = 10.0
+offset_right = -13.0
+offset_bottom = 151.0
+grow_horizontal = 0
+
+[node name="ProductionList" type="VBoxContainer" parent="UI/BuildMenu" unique_id=1385057426]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 190.0
+offset_right = 284.0
+offset_bottom = 625.0
+
+[node name="MinerButton" type="Button" parent="UI/BuildMenu/ProductionList" unique_id=790484769]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_stretch_ratio = 0.79
+
+[node name="DefenseList" type="VBoxContainer" parent="UI/BuildMenu" unique_id=2119845250]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 190.0
+offset_right = 284.0
+offset_bottom = 625.0
+
+[node name="TurretButton" type="Button" parent="UI/BuildMenu/DefenseList" unique_id=1023395191]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="WallButton" type="Button" parent="UI/BuildMenu/DefenseList" unique_id=223017838]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="HQ" type="Node2D" parent="." unique_id=738001155]
+script = ExtResource("5_iywne")
+
+[node name="Enemy" type="Node2D" parent="." unique_id=899493284]
+position = Vector2(200, 320)
+script = ExtResource("6_p57ef")

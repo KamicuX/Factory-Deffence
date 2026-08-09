@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://d1w7v5xdux3ox"]
+
+[ext_resource type="Script" uid="uid://yd88ns51jw6n" path="res://scripts/Turret.cs" id="1_x3mc5"]
+
+[node name="Turret" type="Node2D" unique_id=716949344]
+script = ExtResource("1_x3mc5")
