@@ -13,7 +13,12 @@ public partial class Enemy : Node2D
     public override void _Ready()
     {
         AddToGroup("enemies");
-        targetHQ = GetNode<HQ>("../HQ");
+        
+    }
+
+    public void SetTargetHQ(HQ hq)
+    {
+        targetHQ = hq;
     }
 
     public override void _Process(double delta)
@@ -64,6 +69,10 @@ public partial class Enemy : Node2D
 
     public override void _Draw()
     {
-        DrawCircle(Vector2.Zero, 12, Colors.Purple);
+        DrawCircle(
+           Vector2.Zero,
+           12,
+           Colors.Purple
+       );
     }
 }

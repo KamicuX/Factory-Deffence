@@ -9,16 +9,6 @@ public partial class HQ : Node2D
 
     public override void _Ready()
     {
-        float gridWidth = 35 * CellSize;
-        float gridHeight = 20 * CellSize;
-
-        float hqSize = SizeInCells * CellSize;
-
-        Position = new Vector2(
-            (gridWidth - hqSize) / 2,
-            (gridHeight - hqSize) / 2
-        );
-
         QueueRedraw();
     }
 

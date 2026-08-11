@@ -12,6 +12,8 @@ public partial class Grid : Node2D
     private Vector2I? previewCell = null;
     private bool buildingSelected = false;
     private bool placingHQ = true;
+    private float enemySpawnTimer = -1.0f;
+    private HQ playerHQ;
     private HashSet<Vector2I> occupiedCells = new HashSet<Vector2I>();
 
 
@@ -80,6 +82,10 @@ public partial class Grid : Node2D
         {
             BuildWall(cell);
         }
+        else if (selectedBuilding == "HQ")
+        {
+            BuildHQ(cell);
+        }
 
         GD.Print($"Building placed at X={cell.X}, Y={cell.Y}");
 
@@ -134,23 +140,40 @@ public partial class Grid : Node2D
             );
         }
     }
-    
+
 
 
     public override void _Process(double delta)
     {
+        // TIMER PRZECIWNIKA
+        if (enemySpawnTimer > 0)
+        {
+            enemySpawnTimer -= (float)delta;
+
+            if (enemySpawnTimer <= 0)
+            {
+                SpawnEnemy();
+            }
+        }
+
+        // PREVIEW BUDYNKU
         if (!buildingSelected)
             return;
 
-        Vector2 localPosition = ToLocal(GetGlobalMousePosition());
+        Vector2 localPosition =
+            ToLocal(GetGlobalMousePosition());
 
-        int cellX = Mathf.FloorToInt(localPosition.X / CellSize);
-        int cellY = Mathf.FloorToInt(localPosition.Y / CellSize);
+        int cellX =
+            Mathf.FloorToInt(localPosition.X / CellSize);
+
+        int cellY =
+            Mathf.FloorToInt(localPosition.Y / CellSize);
 
         if (cellX >= 0 && cellX < GridWidth &&
             cellY >= 0 && cellY < GridHeight)
         {
-            Vector2I newCell = new Vector2I(cellX, cellY);
+            Vector2I newCell =
+                new Vector2I(cellX, cellY);
 
             if (previewCell != newCell)
             {
@@ -159,6 +182,29 @@ public partial class Grid : Node2D
             }
         }
     }
+    private void SpawnEnemy()
+    {
+        PackedScene enemyScene =
+        GD.Load<PackedScene>("res://scenes/Enemy.tscn");
+
+        Enemy enemy =
+            enemyScene.Instantiate<Enemy>();
+
+        GetParent().AddChild(enemy);
+
+        // Losowy rząd przy lewej krawędzi Gridu
+        int spawnY = GD.RandRange(0, GridHeight - 1);
+
+        enemy.Position = new Vector2(
+            0,
+            spawnY * CellSize
+        );
+
+        enemy.SetTargetHQ(playerHQ);
+
+        GD.Print($"Enemy spawned at X=0, Y={spawnY}");
+    }
+
     private Vector2 GetCellPosition(Vector2I cell)
     {
         return new Vector2(
@@ -205,6 +251,11 @@ public partial class Grid : Node2D
         GetParent().AddChild(hq);
 
         hq.Position = GetCellPosition(cell);
+
+        playerHQ = hq as HQ;
+        enemySpawnTimer = 10.0f;
+
+        GD.Print("HQ placed! Enemy will spawn in 10 seconds.");
 
         // HQ zajmuje 3x3 pola
         for (int x = 0; x < selectedBuildingSize.X; x++)
