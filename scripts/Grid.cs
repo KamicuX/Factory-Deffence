@@ -1,4 +1,5 @@
 using Godot;
+using System.Collections.Generic;
 
 public partial class Grid : Node2D
 {
@@ -6,13 +7,25 @@ public partial class Grid : Node2D
     private const int GridWidth = 35;
     private const int GridHeight = 20;
     private string selectedBuilding = "";
+    private Vector2I selectedBuildingSize = new Vector2I(1, 1);
 
     private Vector2I? previewCell = null;
     private bool buildingSelected = false;
+    private bool placingHQ = true;
+    private HashSet<Vector2I> occupiedCells = new HashSet<Vector2I>();
 
 
     public override void _Ready()
     {
+        if (placingHQ)
+        {
+            buildingSelected = true;
+            selectedBuilding = "HQ";
+            selectedBuildingSize = new Vector2I(3, 3);
+
+            GD.Print("Choose location for HQ");
+            QueueRedraw();
+        }
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -23,6 +36,9 @@ public partial class Grid : Node2D
             // Prawy przycisk myszy - anulowanie budowania
             if (mouseButton.ButtonIndex == MouseButton.Right)
             {
+                if (placingHQ)
+                    return;
+
                 CancelBuilding();
                 return;
             }
@@ -50,9 +66,19 @@ public partial class Grid : Node2D
 
         Vector2I cell = previewCell.Value;
 
+        if (!IsAreaAvailable(cell))
+        {
+            GD.Print("Cannot build here - area is occupied or outside the Grid.");
+            return;
+        }
+
         if (selectedBuilding == "Turret")
         {
             BuildTurret(cell);
+        }
+        else if (selectedBuilding == "Wall")
+        {
+            BuildWall(cell);
         }
 
         GD.Print($"Building placed at X={cell.X}, Y={cell.Y}");
@@ -94,23 +120,21 @@ public partial class Grid : Node2D
 
         if (buildingSelected && previewCell.HasValue)
         {
-            Vector2I cell = previewCell.Value;
+            Vector2 position = GetCellPosition(previewCell.Value);
 
-            Vector2 position = new Vector2(
-                cell.X * CellSize,
-                cell.Y * CellSize
+            Vector2 size = new Vector2(
+                selectedBuildingSize.X * CellSize,
+                selectedBuildingSize.Y * CellSize
             );
 
             DrawRect(
-                new Rect2(
-                    position,
-                    new Vector2(CellSize, CellSize)
-                ),
+                new Rect2(position, size),
                 Colors.Blue,
                 true
             );
         }
     }
+    
 
 
     public override void _Process(double delta)
@@ -135,6 +159,72 @@ public partial class Grid : Node2D
             }
         }
     }
+    private Vector2 GetCellPosition(Vector2I cell)
+    {
+        return new Vector2(
+            cell.X * CellSize,
+            cell.Y * CellSize
+        );
+    }
+    private bool IsAreaAvailable(Vector2I startCell)
+    {
+        for (int x = 0; x < selectedBuildingSize.X; x++)
+        {
+            for (int y = 0; y < selectedBuildingSize.Y; y++)
+            {
+                Vector2I cell = new Vector2I(
+                    startCell.X + x,
+                    startCell.Y + y
+                );
+
+                // Czy budynek wychodzi poza Grid?
+                if (cell.X < 0 || cell.X >= GridWidth ||
+                    cell.Y < 0 || cell.Y >= GridHeight)
+                {
+                    return false;
+                }
+
+                // Czy pole jest już zajęte?
+                if (occupiedCells.Contains(cell))
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private void BuildHQ(Vector2I cell)
+    {
+        PackedScene hqScene =
+            GD.Load<PackedScene>("res://scenes/HQ.tscn");
+
+        Node2D hq = hqScene.Instantiate<Node2D>();
+
+        GetParent().AddChild(hq);
+
+        hq.Position = GetCellPosition(cell);
+
+        // HQ zajmuje 3x3 pola
+        for (int x = 0; x < selectedBuildingSize.X; x++)
+        {
+            for (int y = 0; y < selectedBuildingSize.Y; y++)
+            {
+                Vector2I occupiedCell = new Vector2I(cell.X + x, cell.Y + y);
+                occupiedCells.Add(occupiedCell);
+            }
+        }
+
+        placingHQ = false;
+        buildingSelected = false;
+        selectedBuilding = "";
+        previewCell = null;
+
+        QueueRedraw();
+
+        GD.Print($"HQ built at X={cell.X}, Y={cell.Y}");
+    }
 
     private void BuildTurret(Vector2I cell)
     {
@@ -145,10 +235,29 @@ public partial class Grid : Node2D
 
         GetParent().AddChild(turret);
 
-        turret.Position = new Vector2(
-            cell.X * CellSize,
-            cell.Y * CellSize
-        );
+        turret.Position = GetCellPosition(cell);
+
+        buildingSelected = false;
+        selectedBuilding = "";
+
+        previewCell = null;
+        occupiedCells.Add(cell);
+        QueueRedraw();
+        
+        GD.Print($"Turret built at X={cell.X}, Y={cell.Y}");
+    }
+
+
+    private void BuildWall(Vector2I cell)
+    {
+        PackedScene wallScene =
+            GD.Load<PackedScene>("res://scenes/Wall.tscn");
+
+        Node2D wall = wallScene.Instantiate<Node2D>();
+
+        GetParent().AddChild(wall);
+
+        wall.Position = GetCellPosition(cell);
 
         buildingSelected = false;
         selectedBuilding = "";
@@ -157,17 +266,34 @@ public partial class Grid : Node2D
 
         QueueRedraw();
 
-        GD.Print($"Turret built at X={cell.X}, Y={cell.Y}");
+        GD.Print($"Wall built at X={cell.X}, Y={cell.Y}");
     }
 
 
     // WYBÓR BUDYNKU
     public void SelectBuilding(string buildingType)
     {
+
+        if (placingHQ && buildingType != "HQ")
+        {
+            GD.Print("You must place the HQ first!");
+            return;
+        }
+
         buildingSelected = true;
         selectedBuilding = buildingType;
 
+        if (buildingType == "HQ")
+        {
+            selectedBuildingSize = new Vector2I(3, 3);
+        }
+        else
+        {
+            selectedBuildingSize = new Vector2I(1, 1);
+        }
+
         GD.Print($"Building selected: {buildingType}");
+        GD.Print($"Building size: {selectedBuildingSize}");
 
         QueueRedraw();
     }
