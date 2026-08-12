@@ -1,3 +1,8 @@
-[gd_scene format=3 uid="uid://dfxh0ssaqkof"]
+[gd_scene format=3 uid="uid://bjbmu8d1kna4x"]
+
+[ext_resource type="Script" uid="uid://obks8ev8iisf" path="res://scripts/Miner.cs" id="1_mf3wj"]
 
 [node name="Miner" type="Node2D" unique_id=584253833]
+
+[node name="Node2D" type="Node2D" parent="." unique_id=824178947]
+script = ExtResource("1_mf3wj")

@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://bk6bkeo7kvew6" path="res://scripts/Camera2D.cs" id="3_lnu2h"]
 [ext_resource type="Script" uid="uid://cvu583rkyxhpo" path="res://scripts/BuildMenu.cs" id="4_lbhrr"]
 [ext_resource type="Script" uid="uid://dfr8qq0dp1mn1" path="res://scripts/WaveManager.cs" id="5_iywne"]
+[ext_resource type="Script" uid="uid://c687yffisnvfm" path="res://scripts/ResearchManager.cs" id="6_gee14"]
 [ext_resource type="Script" uid="uid://yrwtdykyj2kj" path="res://scripts/GameManager.cs" id="6_p57ef"]
 [ext_resource type="Script" uid="uid://8yiuxtys47hi" path="res://scripts/GameOverUI.cs" id="7_u5sy4"]
 
@@ -30,22 +31,123 @@ grow_horizontal = 0
 grow_vertical = 2
 script = ExtResource("4_lbhrr")
 
-[node name="CategoryBar" type="HBoxContainer" parent="UI/BuildMenu" unique_id=1697779976]
+[node name="MainContainer" type="VBoxContainer" parent="UI/BuildMenu" unique_id=912521494]
 layout_mode = 0
-offset_left = 13.0
-offset_top = 156.0
-offset_right = 286.0
-offset_bottom = 184.0
+offset_left = 12.0
+offset_top = 157.0
+offset_right = 285.0
+offset_bottom = 638.0
 
-[node name="ProductionButton" type="Button" parent="UI/BuildMenu/CategoryBar" unique_id=1856487352]
+[node name="ContentContainer" type="Panel" parent="UI/BuildMenu/MainContainer" unique_id=920221667]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BuildingsPanel" type="Panel" parent="UI/BuildMenu/MainContainer/ContentContainer" unique_id=330266489]
+layout_mode = 0
+offset_right = 274.0
+offset_bottom = 446.0
+
+[node name="BuildingsContainer" type="VBoxContainer" parent="UI/BuildMenu/MainContainer/ContentContainer/BuildingsPanel" unique_id=339877556]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Prod" type="HBoxContainer" parent="UI/BuildMenu/MainContainer/ContentContainer/BuildingsPanel/BuildingsContainer" unique_id=1226750627]
+layout_mode = 2
+
+[node name="ProductionButton" type="Button" parent="UI/BuildMenu/MainContainer/ContentContainer/BuildingsPanel/BuildingsContainer/Prod" unique_id=1856487352]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Production"
 
-[node name="DefenseButton" type="Button" parent="UI/BuildMenu/CategoryBar" unique_id=1415081749]
+[node name="VSeparator" type="VSeparator" parent="UI/BuildMenu/MainContainer/ContentContainer/BuildingsPanel/BuildingsContainer/Prod" unique_id=765850052]
+layout_mode = 2
+
+[node name="DefenseButton" type="Button" parent="UI/BuildMenu/MainContainer/ContentContainer/BuildingsPanel/BuildingsContainer/Prod" unique_id=1415081749]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Defence"
+
+[node name="HSeparator" type="HSeparator" parent="UI/BuildMenu/MainContainer/ContentContainer/BuildingsPanel/BuildingsContainer" unique_id=812418184]
+layout_mode = 2
+
+[node name="BuildingListContainer" type="Control" parent="UI/BuildMenu/MainContainer/ContentContainer/BuildingsPanel/BuildingsContainer" unique_id=719682097]
+layout_mode = 2
+
+[node name="ProductionList" type="VBoxContainer" parent="UI/BuildMenu/MainContainer/ContentContainer/BuildingsPanel/BuildingsContainer/BuildingListContainer" unique_id=1385057426]
+layout_mode = 0
+offset_top = 4.0
+offset_right = 274.0
+offset_bottom = 404.0
+offset_transform_enabled = true
+
+[node name="MinerButton" type="Button" parent="UI/BuildMenu/MainContainer/ContentContainer/BuildingsPanel/BuildingsContainer/BuildingListContainer/ProductionList" unique_id=790484769]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_stretch_ratio = 0.79
+text = "Miner"
+
+[node name="DefenseList" type="VBoxContainer" parent="UI/BuildMenu/MainContainer/ContentContainer/BuildingsPanel/BuildingsContainer/BuildingListContainer" unique_id=1357501993]
+layout_mode = 0
+offset_top = 4.0
+offset_right = 274.0
+offset_bottom = 404.0
+
+[node name="WallButton" type="Button" parent="UI/BuildMenu/MainContainer/ContentContainer/BuildingsPanel/BuildingsContainer/BuildingListContainer/DefenseList" unique_id=223017838]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+text = "Wall"
+
+[node name="TurretButton" type="Button" parent="UI/BuildMenu/MainContainer/ContentContainer/BuildingsPanel/BuildingsContainer/BuildingListContainer/DefenseList" unique_id=1023395191]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+text = "Turret"
+
+[node name="ResearchPanel" type="Panel" parent="UI/BuildMenu/MainContainer/ContentContainer" unique_id=12759417]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ResearchContainer" type="VBoxContainer" parent="UI/BuildMenu/MainContainer/ContentContainer/ResearchPanel" unique_id=1074703447]
+layout_mode = 0
+offset_left = -1.0
+offset_right = 275.0
+offset_bottom = 410.0
+
+[node name="ResearchTitle" type="Label" parent="UI/BuildMenu/MainContainer/ContentContainer/ResearchPanel/ResearchContainer" unique_id=1689996948]
+layout_mode = 2
+text = "RESEARCH"
+horizontal_alignment = 1
+
+[node name="ResearchList" type="VBoxContainer" parent="UI/BuildMenu/MainContainer/ContentContainer/ResearchPanel/ResearchContainer" unique_id=1859131386]
+layout_mode = 2
+
+[node name="TurretDamageResearchButton" type="Button" parent="UI/BuildMenu/MainContainer/ContentContainer/ResearchPanel/ResearchContainer/ResearchList" unique_id=1806186487]
+layout_mode = 2
+text = "Turret Damage +50%"
+alignment = 0
+
+[node name="CategoryContainer" type="VBoxContainer" parent="UI/BuildMenu/MainContainer" unique_id=383874367]
+layout_mode = 2
+
+[node name="ResearchButton" type="Button" parent="UI/BuildMenu/MainContainer/CategoryContainer" unique_id=1237834107]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+offset_transform_enabled = true
+text = "Research"
+
+[node name="BuildingsButton" type="Button" parent="UI/BuildMenu/MainContainer/CategoryContainer" unique_id=1498126924]
+layout_mode = 2
+size_flags_horizontal = 3
+offset_transform_enabled = true
+text = "Building"
 
 [node name="Minimap" type="Panel" parent="UI/BuildMenu" unique_id=582811770]
 layout_mode = 1
@@ -58,38 +160,11 @@ offset_right = -13.0
 offset_bottom = 151.0
 grow_horizontal = 0
 
-[node name="ProductionList" type="VBoxContainer" parent="UI/BuildMenu" unique_id=1385057426]
-layout_mode = 0
-offset_left = 14.0
-offset_top = 190.0
-offset_right = 284.0
-offset_bottom = 625.0
-
-[node name="MinerButton" type="Button" parent="UI/BuildMenu/ProductionList" unique_id=790484769]
-custom_minimum_size = Vector2(0, 30)
-layout_mode = 2
-size_flags_stretch_ratio = 0.79
-text = "Miner"
-
-[node name="DefenseList" type="VBoxContainer" parent="UI/BuildMenu" unique_id=2119845250]
-layout_mode = 0
-offset_left = 14.0
-offset_top = 190.0
-offset_right = 284.0
-offset_bottom = 625.0
-
-[node name="TurretButton" type="Button" parent="UI/BuildMenu/DefenseList" unique_id=1023395191]
-custom_minimum_size = Vector2(0, 30)
-layout_mode = 2
-text = "Turret"
-
-[node name="WallButton" type="Button" parent="UI/BuildMenu/DefenseList" unique_id=223017838]
-custom_minimum_size = Vector2(0, 30)
-layout_mode = 2
-text = "Wall"
-
 [node name="WaveManager" type="Node" parent="." unique_id=2034386805]
 script = ExtResource("5_iywne")
+
+[node name="ResearchManager" type="Node" parent="." unique_id=1723292967]
+script = ExtResource("6_gee14")
 
 [node name="ResourceManager" type="Node" parent="." unique_id=333297064]
 
@@ -98,6 +173,7 @@ script = ExtResource("6_p57ef")
 
 [node name="GameOverUI" type="CanvasLayer" parent="." unique_id=1259364505]
 process_mode = 3
+visible = false
 script = ExtResource("7_u5sy4")
 
 [node name="CenterContainer" type="CenterContainer" parent="GameOverUI" unique_id=1195691624]

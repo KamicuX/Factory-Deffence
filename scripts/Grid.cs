@@ -118,10 +118,18 @@ public partial class Grid : Node2D
     }
     private void PlaceBuilding()
     {
-        if (!buildingSelected || !previewCell.HasValue)
+        
+            if (!buildingSelected || !previewCell.HasValue)
             return;
+  
+             Vector2I cell = previewCell.Value;
 
-        Vector2I cell = previewCell.Value;
+        if (selectedBuilding == "Miner" &&
+            !metalOreCells.Contains(cell))
+        {
+            GD.Print("Miner can only be built on Metal Ore!");
+            return;
+        }
 
         if (!IsAreaAvailable(cell))
         {
@@ -140,6 +148,10 @@ public partial class Grid : Node2D
         else if (selectedBuilding == "HQ")
         {
             BuildHQ(cell);
+        }
+        else if (selectedBuilding == "Miner")
+        {
+            BuildMiner(cell);
         }
 
         GD.Print($"Building placed at X={cell.X}, Y={cell.Y}");
@@ -260,7 +272,8 @@ public partial class Grid : Node2D
                     return false;
                 }
 
-                if (metalOreCells.Contains(cell))
+                if (metalOreCells.Contains(cell) &&
+                    selectedBuilding != "Miner")
                 {
                     return false;
                 }
@@ -304,6 +317,34 @@ public partial class Grid : Node2D
         GD.Print($"HQ built at X={cell.X}, Y={cell.Y}");
 
         waveManager.StartWaveCountdown();
+    }
+
+    private void BuildMiner(Vector2I cell)
+    {
+        PackedScene minerScene =
+            GD.Load<PackedScene>(
+                "res://scenes/Miner.tscn"
+            );
+
+        Node2D miner =
+            minerScene.Instantiate<Node2D>();
+
+        GetParent().AddChild(miner);
+
+        miner.Position =
+            GetCellPosition(cell);
+
+        occupiedCells.Add(cell);
+
+        buildingSelected = false;
+        selectedBuilding = "";
+        previewCell = null;
+
+        QueueRedraw();
+
+        GD.Print(
+            $"Miner built at X={cell.X}, Y={cell.Y}"
+        );
     }
 
     private void BuildTurret(Vector2I cell)
