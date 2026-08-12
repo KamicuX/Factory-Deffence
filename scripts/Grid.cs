@@ -12,13 +12,24 @@ public partial class Grid : Node2D
     private Vector2I? previewCell = null;
     private bool buildingSelected = false;
     private bool placingHQ = true;
-    private float enemySpawnTimer = -1.0f;
+
+    private HashSet<Vector2I> metalOreCells =
+    new HashSet<Vector2I>();
+    private const int MetalOreAmount = 15;
+
     private HQ playerHQ;
+    private WaveManager waveManager;
     private HashSet<Vector2I> occupiedCells = new HashSet<Vector2I>();
 
 
     public override void _Ready()
     {
+
+        waveManager =
+            GetParent().GetNode<WaveManager>("WaveManager");
+
+        GenerateMetalOre();
+
         if (placingHQ)
         {
             buildingSelected = true;
@@ -50,6 +61,50 @@ public partial class Grid : Node2D
             {
                 PlaceBuilding();
             }
+        }
+    }
+    private void GenerateMetalOre()
+    {
+        PackedScene oreScene =
+            GD.Load<PackedScene>(
+                "res://scenes/MetalOre.tscn"
+            );
+
+        int generated = 0;
+
+        while (generated < MetalOreAmount)
+        {
+            int x = GD.RandRange(0, GridWidth - 1);
+            int y = GD.RandRange(0, GridHeight - 1);
+
+            Vector2I cell = new Vector2I(x, y);
+
+            // Nie generuj dwóch złóż na tym samym polu
+            if (metalOreCells.Contains(cell))
+                continue;
+
+            // Nie generuj na zajętym polu
+            if (occupiedCells.Contains(cell))
+                continue;
+
+            MetalOre ore =
+                oreScene.Instantiate<MetalOre>();
+
+            ore.Position =
+                GetCellPosition(cell);
+
+            GetParent().CallDeferred(
+               Node.MethodName.AddChild,
+                ore
+              );
+
+            metalOreCells.Add(cell);
+
+            generated++;
+
+            GD.Print(
+                $"Metal Ore generated at X={x}, Y={y}"
+            );
         }
     }
     private void CancelBuilding()
@@ -145,16 +200,6 @@ public partial class Grid : Node2D
 
     public override void _Process(double delta)
     {
-        // TIMER PRZECIWNIKA
-        if (enemySpawnTimer > 0)
-        {
-            enemySpawnTimer -= (float)delta;
-
-            if (enemySpawnTimer <= 0)
-            {
-                SpawnEnemy();
-            }
-        }
 
         // PREVIEW BUDYNKU
         if (!buildingSelected)
@@ -182,28 +227,7 @@ public partial class Grid : Node2D
             }
         }
     }
-    private void SpawnEnemy()
-    {
-        PackedScene enemyScene =
-        GD.Load<PackedScene>("res://scenes/Enemy.tscn");
-
-        Enemy enemy =
-            enemyScene.Instantiate<Enemy>();
-
-        GetParent().AddChild(enemy);
-
-        // Losowy rząd przy lewej krawędzi Gridu
-        int spawnY = GD.RandRange(0, GridHeight - 1);
-
-        enemy.Position = new Vector2(
-            0,
-            spawnY * CellSize
-        );
-
-        enemy.SetTargetHQ(playerHQ);
-
-        GD.Print($"Enemy spawned at X=0, Y={spawnY}");
-    }
+    
 
     private Vector2 GetCellPosition(Vector2I cell)
     {
@@ -235,6 +259,11 @@ public partial class Grid : Node2D
                 {
                     return false;
                 }
+
+                if (metalOreCells.Contains(cell))
+                {
+                    return false;
+                }
             }
         }
 
@@ -243,6 +272,7 @@ public partial class Grid : Node2D
 
     private void BuildHQ(Vector2I cell)
     {
+
         PackedScene hqScene =
             GD.Load<PackedScene>("res://scenes/HQ.tscn");
 
@@ -253,9 +283,6 @@ public partial class Grid : Node2D
         hq.Position = GetCellPosition(cell);
 
         playerHQ = hq as HQ;
-        enemySpawnTimer = 10.0f;
-
-        GD.Print("HQ placed! Enemy will spawn in 10 seconds.");
 
         // HQ zajmuje 3x3 pola
         for (int x = 0; x < selectedBuildingSize.X; x++)
@@ -275,6 +302,8 @@ public partial class Grid : Node2D
         QueueRedraw();
 
         GD.Print($"HQ built at X={cell.X}, Y={cell.Y}");
+
+        waveManager.StartWaveCountdown();
     }
 
     private void BuildTurret(Vector2I cell)

@@ -3,7 +3,7 @@ using Godot;
 public partial class Enemy : Node2D
 {
     private const int Damage = 10;
-    private const float AttackRange = 40.0f;
+    private const float AttackRange = 80.0f;
     private const float AttackCooldown = 1.0f;
     private int health = 100;
 
@@ -14,6 +14,13 @@ public partial class Enemy : Node2D
     {
         AddToGroup("enemies");
         
+        Node hqNode =
+        GetTree().GetFirstNodeInGroup("player_hq");
+
+        if (hqNode is HQ hq)
+        {
+            targetHQ = hq;
+        }
     }
 
     public void SetTargetHQ(HQ hq)
@@ -25,12 +32,16 @@ public partial class Enemy : Node2D
     {
         if (targetHQ == null)
             return;
+        Vector2 hqCenter = targetHQ.GetCenter();
 
-        float distance = GlobalPosition.DistanceTo(targetHQ.GlobalPosition);
+        float distance =
+        GlobalPosition.DistanceTo(hqCenter);
 
         if (distance > AttackRange)
         {
-            Vector2 direction = GlobalPosition.DirectionTo(targetHQ.GlobalPosition);
+
+            Vector2 direction =
+                GlobalPosition.DirectionTo(hqCenter);
 
             GlobalPosition += direction * 50.0f * (float)delta;
         }
@@ -62,6 +73,13 @@ public partial class Enemy : Node2D
         {
             GD.Print("Enemy destroyed!");
 
+            GameManager gameManager =
+                GetTree().Root.GetNode<GameManager>(
+                    "Game/GameManager"
+                );
+
+            gameManager.RegisterEnemyKill();
+
             QueueFree();
         }
     }
@@ -71,7 +89,7 @@ public partial class Enemy : Node2D
     {
         DrawCircle(
            Vector2.Zero,
-           12,
+           5,
            Colors.Purple
        );
     }

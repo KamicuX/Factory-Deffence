@@ -4,6 +4,9 @@
 [ext_resource type="Script" uid="uid://cnkrachya0tme" path="res://scripts/Grid.cs" id="2_lnu2h"]
 [ext_resource type="Script" uid="uid://bk6bkeo7kvew6" path="res://scripts/Camera2D.cs" id="3_lnu2h"]
 [ext_resource type="Script" uid="uid://cvu583rkyxhpo" path="res://scripts/BuildMenu.cs" id="4_lbhrr"]
+[ext_resource type="Script" uid="uid://dfr8qq0dp1mn1" path="res://scripts/WaveManager.cs" id="5_iywne"]
+[ext_resource type="Script" uid="uid://yrwtdykyj2kj" path="res://scripts/GameManager.cs" id="6_p57ef"]
+[ext_resource type="Script" uid="uid://8yiuxtys47hi" path="res://scripts/GameOverUI.cs" id="7_u5sy4"]
 
 [node name="Game" type="Node2D" unique_id=85277427]
 script = ExtResource("1_yqjtg")
@@ -37,10 +40,12 @@ offset_bottom = 184.0
 [node name="ProductionButton" type="Button" parent="UI/BuildMenu/CategoryBar" unique_id=1856487352]
 layout_mode = 2
 size_flags_horizontal = 3
+text = "Production"
 
 [node name="DefenseButton" type="Button" parent="UI/BuildMenu/CategoryBar" unique_id=1415081749]
 layout_mode = 2
 size_flags_horizontal = 3
+text = "Defence"
 
 [node name="Minimap" type="Panel" parent="UI/BuildMenu" unique_id=582811770]
 layout_mode = 1
@@ -64,6 +69,7 @@ offset_bottom = 625.0
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_stretch_ratio = 0.79
+text = "Miner"
 
 [node name="DefenseList" type="VBoxContainer" parent="UI/BuildMenu" unique_id=2119845250]
 layout_mode = 0
@@ -75,7 +81,82 @@ offset_bottom = 625.0
 [node name="TurretButton" type="Button" parent="UI/BuildMenu/DefenseList" unique_id=1023395191]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
+text = "Turret"
 
 [node name="WallButton" type="Button" parent="UI/BuildMenu/DefenseList" unique_id=223017838]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
+text = "Wall"
+
+[node name="WaveManager" type="Node" parent="." unique_id=2034386805]
+script = ExtResource("5_iywne")
+
+[node name="ResourceManager" type="Node" parent="." unique_id=333297064]
+
+[node name="GameManager" type="Node" parent="." unique_id=1696867660]
+script = ExtResource("6_p57ef")
+
+[node name="GameOverUI" type="CanvasLayer" parent="." unique_id=1259364505]
+process_mode = 3
+script = ExtResource("7_u5sy4")
+
+[node name="CenterContainer" type="CenterContainer" parent="GameOverUI" unique_id=1195691624]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="GameOverUI/CenterContainer" unique_id=625736464]
+custom_minimum_size = Vector2(450, 250)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="GameOverUI/CenterContainer/Panel" unique_id=1143668318]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = -30.0
+offset_right = 40.0
+offset_bottom = 30.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 30
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GameOverUI/CenterContainer/Panel/MarginContainer" unique_id=244284611]
+custom_minimum_size = Vector2(450, 250)
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="GameOverUI/CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=2026061106]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "GAME OVER"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="GameOverUI/CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=1227056532]
+layout_mode = 2
+
+[node name="EnemiesKilledLabel" type="Label" parent="GameOverUI/CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=656074134]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Enemies killed: 0"
+horizontal_alignment = 1
+
+[node name="WaveLabel" type="Label" parent="GameOverUI/CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=1253498008]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Wave reached: 0"
+horizontal_alignment = 1
+
+[node name="HSeparator2" type="HSeparator" parent="GameOverUI/CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=716200977]
+layout_mode = 2
+
+[node name="RestartButton" type="Button" parent="GameOverUI/CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=1841535605]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 20
+text = "RESTART"

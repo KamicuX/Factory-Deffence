@@ -34,13 +34,16 @@ public partial class Turret : Node2D
     {
         Enemy closestEnemy = null;
         float closestDistance = AttackRange;
+        Vector2 turretCenter =
+        GlobalPosition + new Vector2(16, 16);
 
         foreach (Node node in GetTree().GetNodesInGroup("enemies"))
         {
             if (node is Enemy enemy)
             {
+               
                 float distance =
-                    GlobalPosition.DistanceTo(enemy.GlobalPosition);
+                    turretCenter.DistanceTo(enemy.GlobalPosition);
 
                 if (distance <= closestDistance)
                 {
@@ -76,7 +79,7 @@ public partial class Turret : Node2D
         );
 
         DrawArc(
-            Vector2.Zero,
+            new Vector2(16, 16),
             AttackRange,
             0,
             Mathf.Tau,

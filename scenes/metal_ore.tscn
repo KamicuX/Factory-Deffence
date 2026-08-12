@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dvql6cldv8ywi"]
+
+[ext_resource type="Script" uid="uid://c7t53hscxobdq" path="res://scripts/MetalOre.cs" id="1_ecwpd"]
+
+[node name="MetalOre" type="Node2D" unique_id=805002098]
+script = ExtResource("1_ecwpd")

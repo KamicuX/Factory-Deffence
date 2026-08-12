@@ -9,6 +9,7 @@ public partial class HQ : Node2D
 
     public override void _Ready()
     {
+        AddToGroup("player_hq");
         QueueRedraw();
     }
 
@@ -32,6 +33,13 @@ public partial class HQ : Node2D
             3
         );
     }
+    public Vector2 GetCenter()
+    {
+        return GlobalPosition + new Vector2(
+            SizeInCells * CellSize / 2,
+            SizeInCells * CellSize / 2
+        );
+    }
     public void TakeDamage(int damage)
     {
         Health -= damage;
@@ -44,6 +52,11 @@ public partial class HQ : Node2D
 
             GD.Print("HQ DESTROYED!");
             GD.Print($"Player {PlayerId} LOSES!");
+
+            GameManager gameManager =
+        GetTree().Root.GetNode<GameManager>("Game/GameManager");
+
+            gameManager.PlayerLost();
         }
     }
 }
