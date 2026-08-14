@@ -328,17 +328,12 @@ public partial class Enemy : Node2D
         {
             wall.TakeDamage(Damage);
 
-            if(false) GD.Print(
-                $"Enemy attacked wall for {Damage} damage"
-            );
-
             if (!IsInstanceValid(wall))
             {
             if (DebugConfig.EnableLogs) GD.Print("Wall destroyed. Returning to HQ.");
 
                 ClearCurrentTarget();
             }
-
             return;
         }
 
@@ -346,9 +341,7 @@ public partial class Enemy : Node2D
         {
             hq.TakeDamage(Damage);
 
-            if(false) GD.Print(
-                $"Enemy attacked HQ for {Damage} damage"
-            );
+            
 
             return;
         }
@@ -357,9 +350,7 @@ public partial class Enemy : Node2D
         {
             turret.TakeDamage(Damage);
 
-            if(false) GD.Print(
-                $"Enemy attacked turret for {Damage} damage"
-            );
+            
 
             if (!IsInstanceValid(currentTargetNode))
             {
@@ -383,11 +374,11 @@ public partial class Enemy : Node2D
     {
         health -= damage;
 
-        if(false) GD.Print($"Enemy HP: {health}");
+        
 
         if (health <= 0)
         {
-            if(false) GD.Print("Enemy destroyed!");
+            
 
             GameManager gameManager =
                 GetTree().Root.GetNode<GameManager>(
@@ -406,6 +397,7 @@ public partial class Enemy : Node2D
         pathIndex = 0;
         knownGridVersion = -1;
         pathRecalcTimer = 0.0f;
+        if (DebugConfig.EnableLogs) GD.Print($"Enemy: ClearCurrentTarget called");
     }
 
     // Called by attackers (e.g., Turret) to mark them as a retaliatory target

@@ -192,6 +192,9 @@ public partial class Grid : Node2D
             cell,
             blocked
         );
+        // Ensure A* internal connectivity is updated after changing solidity
+        pathfindingGrid.Update();
+
         if (DebugConfig.EnableLogs) GD.Print(
     $"A* cells: " +
     $"(1,1)={pathfindingGrid.IsPointSolid(new Vector2I(1, 1))} | " +
@@ -599,6 +602,7 @@ public partial class Grid : Node2D
         }
 
         UpdatePathfindingCell(cell);
+        if (DebugConfig.EnableLogs) GD.Print($"Grid: RemoveOccupiedCell at {cell}");
         MarkGridChanged();
     }
     public void RemoveObject(Node2D objectNode)
@@ -625,7 +629,7 @@ public partial class Grid : Node2D
             occupiedMap.Remove(cell);
             UpdatePathfindingCell(cell);
         }
-
+        if (DebugConfig.EnableLogs) GD.Print($"Grid: RemoveObject removed {cellsToRemove.Count} cells for {objectNode}");
         MarkGridChanged();
     }
 
@@ -829,8 +833,6 @@ public partial class Grid : Node2D
 
         QueueRedraw();
 
-        if(false) GD.Print($"HQ built at X={cell.X}, Y={cell.Y}");
-
         // notify listeners that grid changed (HQ occupies multiple cells)
         MarkGridChanged();
 
@@ -863,9 +865,7 @@ public partial class Grid : Node2D
 
         QueueRedraw();
 
-        if(false) GD.Print(
-            $"Miner built at X={cell.X}, Y={cell.Y}"
-        );
+        
     }
 
     private void BuildTurret(Vector2I cell)
@@ -889,7 +889,7 @@ public partial class Grid : Node2D
         MarkGridChanged();
         QueueRedraw();
 
-        if(false) GD.Print($"Turret built at X={cell.X}, Y={cell.Y}");
+        
     }
 
 
@@ -917,7 +917,7 @@ public partial class Grid : Node2D
 
         QueueRedraw();
 
-        if(false) GD.Print($"Wall built at X={cell.X}, Y={cell.Y}");
+        
     }
 
 
@@ -927,7 +927,7 @@ public partial class Grid : Node2D
 
         if (placingHQ && buildingType != "HQ")
         {
-        if(false) GD.Print("You must place the HQ first!");
+        
             return;
         }
 
@@ -942,9 +942,6 @@ public partial class Grid : Node2D
         {
             selectedBuildingSize = new Vector2I(1, 1);
         }
-
-        if(false) GD.Print($"Building selected: {buildingType}");
-        if(false) GD.Print($"Building size: {selectedBuildingSize}");
 
         QueueRedraw();
     }

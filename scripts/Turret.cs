@@ -112,7 +112,8 @@ public partial class Turret : Node2D
             if (DebugConfig.EnableLogs) GD.Print("Turret destroyed!");
             if (grid != null)
             {
-                grid.RemoveOccupiedCell(myCell);
+                if (DebugConfig.EnableLogs) GD.Print($"Turret: calling RemoveObject for turret instance");
+                grid.RemoveObject(this);
             }
             QueueFree();
         }
