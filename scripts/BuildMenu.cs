@@ -223,18 +223,18 @@ public partial class BuildMenu : Panel
 
     private void OnMinerPressed()
     {
-        GD.Print("Miner selected");
+        if (DebugConfig.EnableLogs) GD.Print("Miner selected");
         grid.SelectBuilding("Miner");
     }
 
     private void OnTurretPressed()
     {
-        GD.Print("Turret selected");
+        if (DebugConfig.EnableLogs) GD.Print("Turret selected");
         grid.SelectBuilding("Turret");
     }
     private void OnWallPressed()
     {
-        GD.Print("Wall selected");
+        if (DebugConfig.EnableLogs) GD.Print("Wall selected");
         grid.SelectBuilding("Wall");
     }
 

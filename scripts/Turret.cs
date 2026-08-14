@@ -7,6 +7,11 @@ public partial class Turret : Node2D
     private const float AttackRange = 180.0f;
     private const float AttackCooldown = 1.0f;
 
+    private const int MaxHealth = 150;
+    private int health;
+    private Vector2I myCell;
+    private Grid grid;
+
     private float attackTimer = 0.0f;
 
     public override void _Ready()
@@ -20,6 +25,14 @@ public partial class Turret : Node2D
         SetDamageMultiplier(
             researchManager.GetTurretDamageMultiplier()
            );
+
+        health = MaxHealth;
+
+        grid = GetTree().Root.GetNode<Grid>("Game/Grid");
+        if (grid != null)
+        {
+            myCell = grid.WorldToCell(GlobalPosition);
+        }
 
         QueueRedraw();
     }
@@ -80,10 +93,29 @@ public partial class Turret : Node2D
         int damage = GetDamage();
 
         enemy.TakeDamage(damage);
+        // Notify enemy that it has been attacked by this turret so it can retaliate
+        enemy.OnAttackedBy(this);
 
-        GD.Print(
+        if (DebugConfig.EnableLogs) GD.Print(
             $"Turret attacked enemy for {damage} damage"
         );
+    }
+
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+
+        if (DebugConfig.EnableLogs) GD.Print($"Turret HP: {health}/{MaxHealth}");
+
+        if (health <= 0)
+        {
+            if (DebugConfig.EnableLogs) GD.Print("Turret destroyed!");
+            if (grid != null)
+            {
+                grid.RemoveOccupiedCell(myCell);
+            }
+            QueueFree();
+        }
     }
 
 

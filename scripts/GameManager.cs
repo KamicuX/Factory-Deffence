@@ -11,7 +11,7 @@ public partial class GameManager : Node
     public void RegisterEnemyKill()
     {
         enemiesKilled++;
-        GD.Print($"Enemies killed: {enemiesKilled}");
+        if (DebugConfig.EnableLogs) GD.Print($"Enemies killed: {enemiesKilled}");
     }
 
     public void PlayerLost()
@@ -21,8 +21,8 @@ public partial class GameManager : Node
 
         GameOver = true;
 
-        GD.Print("========== GAME OVER ==========");
-        GD.Print("Player 1 LOSES!");
+        if (DebugConfig.EnableLogs) GD.Print("========== GAME OVER ==========");
+        if (DebugConfig.EnableLogs) GD.Print("Player 1 LOSES!");
 
         GameOverUI gameOverUI =
             GetTree().Root.GetNode<GameOverUI>(

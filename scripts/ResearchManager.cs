@@ -27,7 +27,7 @@ public partial class ResearchManager : Node
     {
         turretDamageResearchLevel++;
 
-        GD.Print(
+        if (DebugConfig.EnableLogs) GD.Print(
             $"Turret Damage Research Level: " +
             $"{turretDamageResearchLevel}"
         );

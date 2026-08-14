@@ -44,14 +44,14 @@ public partial class HQ : Node2D
     {
         Health -= damage;
 
-        GD.Print($"HQ HP: {Health}");
+        if (DebugConfig.EnableLogs) GD.Print($"HQ HP: {Health}");
 
         if (Health <= 0)
         {
             Health = 0;
 
-            GD.Print("HQ DESTROYED!");
-            GD.Print($"Player {PlayerId} LOSES!");
+            if (DebugConfig.EnableLogs) GD.Print("HQ DESTROYED!");
+            if (DebugConfig.EnableLogs) GD.Print($"Player {PlayerId} LOSES!");
 
             GameManager gameManager =
         GetTree().Root.GetNode<GameManager>("Game/GameManager");
