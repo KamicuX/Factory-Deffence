@@ -217,7 +217,7 @@ public partial class Enemy : Node2D
                     }
                 }
 
-            pathIndex = 0;
+            pathIndex = 1;
 
             knownGridVersion =
                 grid.GridVersion;
