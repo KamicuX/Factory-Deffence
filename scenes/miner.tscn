@@ -1,8 +1,14 @@
 [gd_scene format=3 uid="uid://bjbmu8d1kna4x"]
 
-[ext_resource type="Script" uid="uid://obks8ev8iisf" path="res://scripts/Miner.cs" id="1_mf3wj"]
+[ext_resource type="Script" uid="uid://obks8ev8iisf" path="res://scripts/Buildings/Miner/Miner.cs" id="1_mf3wj"]
+[ext_resource type="Script" uid="uid://cbou110jcbtnc" path="res://scripts/Buildings/Miner/MinerData.cs" id="2_lj6gh"]
+
+[sub_resource type="Resource" id="Resource_mf3wj"]
+script = ExtResource("2_lj6gh")
+metadata/_custom_type_script = "uid://cbou110jcbtnc"
 
 [node name="Miner" type="Node2D" unique_id=584253833]
 
-[node name="Node2D" type="Node2D" parent="." unique_id=824178947]
+[node name="Miner" type="Node2D" parent="." unique_id=824178947]
 script = ExtResource("1_mf3wj")
+Data = SubResource("Resource_mf3wj")

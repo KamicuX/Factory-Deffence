@@ -13,6 +13,7 @@ public partial class WaveManager : Node
     private bool countdownActive = false;
     private float waveBreakTimer = 0.0f;
     private bool waveBreakActive = false;
+    private bool waitingForAllKilled = false;
     private bool waveSystemActive = false;
 
     private const float WaveBreakTime = 10.0f;
@@ -83,36 +84,28 @@ public partial class WaveManager : Node
 
             return;
         }
-        // Wszystkie przeciwniki z aktualnej fali zostały zrespione
-        if (enemiesSpawned >= enemiesPerWave)
+
+        // Jeśli wszystkie przeciwniki zostały zrespione, czekamy aż je zabiją (dla następnej fali)
+        if (waitingForAllKilled)
         {
-            waveBreakActive = true;
-            waveBreakTimer = WaveBreakTime;
-
-            GD.Print(
-                $"Wave {currentWave} completed!"
-            );
-
-            GD.Print(
-                $"Next wave in {WaveBreakTime} seconds..."
-            );
+            var list = GetTree().GetNodesInGroup("enemies");
+            if (list.Count == 0)
+            {
+                // Start next wave after a short delay to give player feedback
+                waitingForAllKilled = false;
+                waveBreakActive = true;
+                waveBreakTimer = 5.0f; // 5 seconds pause after last enemy killed
+                GD.Print($"All enemies killed. Next wave in {waveBreakTimer} seconds...");
+            }
 
             return;
         }
-
-        //spawn przeciwnikow
+        // Jeśli już zrespiono wszystkich przeciwników, przełączamy się w tryb oczekiwania na ich zabicie
         if (enemiesSpawned >= enemiesPerWave)
         {
-            waveBreakActive = true;
-            waveBreakTimer = WaveBreakTime;
+            waitingForAllKilled = true;
 
-            GD.Print(
-                $"Wave {currentWave} completed!"
-            );
-
-            GD.Print(
-                $"Next wave in {WaveBreakTime} seconds..."
-            );
+            GD.Print($"Wave {currentWave} all spawned. Waiting for all enemies to be killed...");
 
             return;
         }
@@ -145,8 +138,7 @@ public partial class WaveManager : Node
                  16,
                  spawnY * 32 + 16
             );
-        GD.Print($"Enemy spawned at X=0, ={spawnY}"
-            );
+        GD.Print($"Enemy spawned at X=16, Y={spawnY}");
     }
 
 }

@@ -17,6 +17,8 @@ public partial class Enemy : Node2D
     private int knownGridVersion = -1;
 
     private Node2D currentTargetNode = null;
+    private int targetRetryCount = 0;
+    private const int MaxTargetRetries = 6;
 
     // fallback periodic recalculation in case event missed
     private float pathRecalcTimer = 0.0f;
@@ -161,30 +163,41 @@ public partial class Enemy : Node2D
                 var blockingObj = grid.GetObjectAtCell(blockingCell);
                 if (blockingObj != null)
                 {
-                    // Prefer to attack walls (or any blocking object) on the direct line to the HQ
-                    currentTargetNode = blockingObj;
-
-                    Vector2I originCell = startCellCheck;
-                    Vector2I? attackCell = grid.FindClosestWalkableAdjacent(blockingCell, originCell);
-                    if (attackCell.HasValue)
+                    // Only target known attackable building types
+                    bool attackable = blockingObj is Wall || blockingObj is Turret || blockingObj is HQ || blockingObj is Miner;
+                    if (!attackable)
                     {
-                        Vector2 attackPos = grid.GetCellCenter(attackCell.Value);
-                        path = grid.FindPath(GlobalPosition, attackPos);
-                        pathIndex = 0;
+                        // ignore and compute normal path
+                        path = grid.FindPath(GlobalPosition, currentGoal);
                     }
                     else
                     {
-                        // Try reachable attack positions near occupied cells
-                        if (grid.TryFindReachableAttackPosition(originCell, goalCellCheck, out Vector2 attackPos2, out Vector2I occCell))
+                        // Prefer to attack blockingObj
+                        currentTargetNode = blockingObj;
+                        targetRetryCount = 0;
+
+                        Vector2I originCell = startCellCheck;
+                        Vector2I? attackCell = grid.FindClosestWalkableAdjacent(blockingCell, originCell);
+                        if (attackCell.HasValue)
                         {
-                            path = grid.FindPath(GlobalPosition, attackPos2);
+                            Vector2 attackPos = grid.GetCellCenter(attackCell.Value);
+                            path = grid.FindPath(GlobalPosition, attackPos);
                             pathIndex = 0;
-                            currentTargetNode = grid.GetObjectAtCell(occCell);
                         }
                         else
                         {
-                            // fallback: compute normal path to goal (will likely go around)
-                            path = grid.FindPath(GlobalPosition, currentGoal);
+                            // Try reachable attack positions near occupied cells
+                            if (grid.TryFindReachableAttackPosition(originCell, goalCellCheck, out Vector2 attackPos2, out Vector2I occCell))
+                            {
+                                path = grid.FindPath(GlobalPosition, attackPos2);
+                                pathIndex = 0;
+                                currentTargetNode = grid.GetObjectAtCell(occCell);
+                            }
+                            else
+                            {
+                                // fallback: compute normal path to goal (will likely go around)
+                                path = grid.FindPath(GlobalPosition, currentGoal);
+                            }
                         }
                     }
                 }
@@ -224,6 +237,27 @@ public partial class Enemy : Node2D
 
             pathRecalcTimer =
                 PathRecalcInterval;
+
+            // If we targeted an object but couldn't find a path to attack position, retry a few times then give up
+            if (currentTargetNode != null)
+            {
+                if (path == null || path.Count == 0)
+                {
+                    targetRetryCount++;
+                    if (DebugConfig.EnableLogs) GD.Print($"Enemy: target unreachable, retry {targetRetryCount}/{MaxTargetRetries}");
+                    if (targetRetryCount > MaxTargetRetries)
+                    {
+                        if (DebugConfig.EnableLogs) GD.Print("Enemy: giving up on target and continuing to HQ");
+                        ClearCurrentTarget();
+                        path = grid.FindPath(GlobalPosition, hqCenter);
+                        pathIndex = 0;
+                    }
+                }
+                else
+                {
+                    targetRetryCount = 0;
+                }
+            }
 
             // -------------------------------------------------
             // NO PATH TO HQ
@@ -283,6 +317,65 @@ public partial class Enemy : Node2D
         // -------------------------------------------------
         // MOVEMENT
         // -------------------------------------------------
+
+        // Opportunistic attack: if moving and no current target, check nearby cells for buildings to attack
+        if (currentTargetNode == null && grid != null)
+        {
+            Vector2I enemyCell = grid.WorldToCell(GlobalPosition);
+            int scanRadius = 2; // cells
+            bool found = false;
+
+            for (int dx = -scanRadius; dx <= scanRadius && !found; dx++)
+            {
+                for (int dy = -scanRadius; dy <= scanRadius && !found; dy++)
+                {
+                    Vector2I check = new Vector2I(enemyCell.X + dx, enemyCell.Y + dy);
+                    if (!grid.IsInsideGrid(check))
+                        continue;
+
+                    if (!grid.IsCellOccupied(check))
+                        continue;
+
+                    var obj = grid.GetObjectAtCell(check);
+                    if (obj == null)
+                        continue;
+
+                    // don't target HQ via opportunistic scan if it's the main goal (handled elsewhere)
+                    if (obj == (Node)targetHQ)
+                        continue;
+
+                    // Found a nearby building/object to attack
+                    currentTargetNode = obj;
+                    targetRetryCount = 0;
+
+                    // Try to path to an adjacent attack cell
+                    Vector2I originCell = enemyCell;
+                    Vector2I? attackCell = grid.FindClosestWalkableAdjacent(check, originCell);
+                    if (attackCell.HasValue)
+                    {
+                        Vector2 attackPos = grid.GetCellCenter(attackCell.Value);
+                        path = grid.FindPath(GlobalPosition, attackPos);
+                        pathIndex = 0;
+                    }
+                    else if (grid.TryFindReachableAttackPosition(originCell, grid.WorldToCell(hqCenter), out Vector2 attackPos2, out Vector2I occCell))
+                    {
+                        path = grid.FindPath(GlobalPosition, attackPos2);
+                        pathIndex = 0;
+                        currentTargetNode = grid.GetObjectAtCell(occCell);
+                    }
+                    else
+                    {
+                        // fallback: continue moving (no path to attack pos)
+                        currentTargetNode = null;
+                    }
+
+                    if (DebugConfig.EnableLogs && currentTargetNode != null)
+                        GD.Print($"Enemy opportunistic target acquired: {currentTargetNode} at cell {check}");
+
+                    found = currentTargetNode != null;
+                }
+            }
+        }
 
         if (path != null &&
             path.Count > 0 &&

@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="MinerData" format=3 uid="uid://e2sxmvxqh12q"]
+
+[ext_resource type="Script" uid="uid://cbou110jcbtnc" path="res://scripts/Buildings/Miner/MinerData.cs" id="1_t1dph"]
+
+[resource]
+script = ExtResource("1_t1dph")
+metadata/_custom_type_script = "uid://cbou110jcbtnc"

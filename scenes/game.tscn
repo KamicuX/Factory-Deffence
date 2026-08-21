@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://c687yffisnvfm" path="res://scripts/ResearchManager.cs" id="6_gee14"]
 [ext_resource type="Script" uid="uid://yrwtdykyj2kj" path="res://scripts/GameManager.cs" id="6_p57ef"]
 [ext_resource type="Script" uid="uid://8yiuxtys47hi" path="res://scripts/GameOverUI.cs" id="7_u5sy4"]
+[ext_resource type="Script" uid="uid://dpfuqmy5whtns" path="res://scripts/Economy/ResourceUI.cs" id="9_0tnpc"]
 
 [node name="Game" type="Node2D" unique_id=85277427]
 script = ExtResource("1_yqjtg")
@@ -236,3 +237,28 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 20
 text = "RESTART"
+
+[node name="ResourceUI" type="CanvasLayer" parent="." unique_id=1944783229]
+script = ExtResource("9_0tnpc")
+
+[node name="MetalPanel" type="Panel" parent="ResourceUI" unique_id=194577158]
+offset_left = 263.0
+offset_top = 1.0
+offset_right = 405.0
+offset_bottom = 38.0
+
+[node name="MetalLabel" type="Label" parent="ResourceUI/MetalPanel" unique_id=1824961524]
+layout_mode = 0
+offset_left = 10.0
+offset_right = 114.0
+offset_bottom = 23.0
+text = "Metal: 0 / 500"
+
+[node name="MetalProgressBar" type="ProgressBar" parent="ResourceUI/MetalPanel" unique_id=414593342]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 22.0
+offset_right = 113.0
+offset_bottom = 31.0
+max_value = 500.0
+show_percentage = false
