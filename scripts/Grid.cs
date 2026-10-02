@@ -6,6 +6,11 @@ public partial class Grid : Node2D
     private const int CellSize = 32;
     private const int GridWidth = 35;
     private const int GridHeight = 20;
+    // Koszty budynków (metal)
+    private const int CostMiner = 20;
+    private const int CostTurret = 50;
+    private const int CostWall = 10;
+    private const int CostHQ = 0; // HQ is free
     private string selectedBuilding = "";
     private Vector2I selectedBuildingSize = new Vector2I(1, 1);
 
@@ -284,11 +289,10 @@ public partial class Grid : Node2D
     }
     private void PlaceBuilding()
     {
-        
-            if (!buildingSelected || !previewCell.HasValue)
+        if (!buildingSelected || !previewCell.HasValue)
             return;
-  
-             Vector2I cell = previewCell.Value;
+
+        Vector2I cell = previewCell.Value;
 
         if (selectedBuilding == "Miner" &&
             !metalOreCells.Contains(cell))
@@ -301,6 +305,30 @@ public partial class Grid : Node2D
         {
             if (DebugConfig.EnableLogs) GD.Print("Cannot build here - area is occupied or outside the Grid.");
             return;
+        }
+
+        // Sprawdź czy ResourceManager jest dostępny
+        if (ResourceManager.Instance == null)
+        {
+            if (DebugConfig.EnableLogs) GD.Print("No ResourceManager instance available - cannot charge for building.");
+            return;
+        }
+
+        // Spróbuj pobrać koszt przed postawieniem budynku
+        int cost = 0;
+        if (selectedBuilding == "Turret") cost = CostTurret;
+        else if (selectedBuilding == "Wall") cost = CostWall;
+        else if (selectedBuilding == "HQ") cost = CostHQ;
+        else if (selectedBuilding == "Miner") cost = CostMiner;
+
+        if (cost > 0)
+        {
+            bool paid = ResourceManager.Instance.TrySpend(ResourceType.Metal, cost);
+            if (!paid)
+            {
+                if (DebugConfig.EnableLogs) GD.Print($"Not enough Metal to build {selectedBuilding}. Required: {cost}");
+                return;
+            }
         }
 
         if (selectedBuilding == "Turret")
@@ -318,6 +346,7 @@ public partial class Grid : Node2D
         else if (selectedBuilding == "Miner")
         {
             BuildMiner(cell);
+
         }
 
         if (DebugConfig.EnableLogs) GD.Print($"Building placed at X={cell.X}, Y={cell.Y}");
