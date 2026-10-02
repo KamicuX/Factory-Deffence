@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="FactoryDefence"
-run/main_scene="uid://3t8thgoqsw05"
+run/main_scene="uid://taciogg2u1sq"
 config/features=PackedStringArray("4.7", "C#", "GL Compatibility")
 config/icon="res://icon.svg"
 

@@ -1,6 +1,6 @@
 using Godot;
 
-public partial class Turret : Node2D
+public partial class Turret : Node2D, IDamageable
 {
     private const int BaseDamage = 25;
     private float damageMultiplier = 1.0f;
@@ -92,9 +92,17 @@ public partial class Turret : Node2D
     {
         int damage = GetDamage();
 
-        enemy.TakeDamage(damage);
-        // Notify enemy that it has been attacked by this turret so it can retaliate
-        enemy.OnAttackedBy(this);
+        // Use centralized DamageManager to apply damage and notify the enemy
+        if (DamageManager.Instance != null)
+        {
+            DamageManager.Instance.ApplyDamage(enemy, damage, this);
+        }
+        else
+        {
+            // Fallback to direct method if DamageManager is not present
+            enemy.TakeDamage(damage);
+            enemy.OnAttackedBy(this);
+        }
 
         if (DebugConfig.EnableLogs) GD.Print(
             $"Turret attacked enemy for {damage} damage"

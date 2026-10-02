@@ -1,0 +1,58 @@
+[gd_scene format=3 uid="uid://taciogg2u1sq"]
+
+[ext_resource type="Script" uid="uid://cl37vn23a5fky" path="res://scripts/MainMenu.cs" id="1_l6cm7"]
+[ext_resource type="Texture2D" uid="uid://b2q2oblwkkhlb" path="res://assets/sprites/mouse.png" id="2_ekxnf"]
+
+[node name="MainMenu" type="Control" unique_id=189203441]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_l6cm7")
+
+[node name="Background" type="ColorRect" parent="." unique_id=525243999]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_right = 2.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.5019608, 0.5019608, 0.5019608, 1)
+
+[node name="MenuContainer" type="VBoxContainer" parent="." unique_id=947847194]
+layout_mode = 0
+offset_left = 436.0
+offset_top = 275.0
+offset_right = 687.0
+offset_bottom = 591.0
+
+[node name="Title" type="Label" parent="MenuContainer" unique_id=1343812806]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Factory Defence"
+
+[node name="PlayButton" type="Button" parent="MenuContainer" unique_id=1066557293]
+layout_mode = 2
+size_flags_stretch_ratio = 1.21
+offset_transform_enabled = true
+text = "Play"
+
+[node name="OptionButton" type="Button" parent="MenuContainer" unique_id=1678254592]
+layout_mode = 2
+text = "OPTION"
+
+[node name="QuitButton" type="Button" parent="MenuContainer" unique_id=554095170]
+layout_mode = 2
+text = "QUIT"
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1179110620]
+position = Vector2(941.99994, 421)
+scale = Vector2(0.852, 0.91)
+texture = ExtResource("2_ekxnf")
+
+[connection signal="pressed" from="MenuContainer/PlayButton" to="." method="OnPlayButtonPressed"]
+[connection signal="pressed" from="MenuContainer/QuitButton" to="." method="OnQuitButtonPressed"]

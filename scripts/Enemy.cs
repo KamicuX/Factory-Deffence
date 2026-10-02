@@ -1,7 +1,7 @@
 using Godot;
 using System.Collections.Generic;
 
-public partial class Enemy : Node2D
+public partial class Enemy : Node2D, IDamageable
 {
     private const int Damage = 10;
     private const float AttackRange = 80.0f;
@@ -419,12 +419,14 @@ public partial class Enemy : Node2D
 
         if (currentTargetNode is Wall wall)
         {
-            wall.TakeDamage(Damage);
+            if (DamageManager.Instance != null)
+                DamageManager.Instance.ApplyDamage(wall, Damage, this);
+            else
+                wall.TakeDamage(Damage);
 
             if (!IsInstanceValid(wall))
             {
-            if (DebugConfig.EnableLogs) GD.Print("Wall destroyed. Returning to HQ.");
-
+                if (DebugConfig.EnableLogs) GD.Print("Wall destroyed. Returning to HQ.");
                 ClearCurrentTarget();
             }
             return;
@@ -432,18 +434,20 @@ public partial class Enemy : Node2D
 
         if (currentTargetNode is HQ hq)
         {
-            hq.TakeDamage(Damage);
-
-            
+            if (DamageManager.Instance != null)
+                DamageManager.Instance.ApplyDamage(hq, Damage, this);
+            else
+                hq.TakeDamage(Damage);
 
             return;
         }
 
         if (currentTargetNode is Turret turret)
         {
-            turret.TakeDamage(Damage);
-
-            
+            if (DamageManager.Instance != null)
+                DamageManager.Instance.ApplyDamage(turret, Damage, this);
+            else
+                turret.TakeDamage(Damage);
 
             if (!IsInstanceValid(currentTargetNode))
             {

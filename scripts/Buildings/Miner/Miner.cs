@@ -1,6 +1,6 @@
 using Godot;
 
-public partial class Miner : Node2D
+public partial class Miner : Node2D, IDamageable
 {
     [Export]
     public MinerData Data { get; set; }

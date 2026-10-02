@@ -5,6 +5,13 @@ public partial class Camera2D : Godot.Camera2D
     [Export]
     public float Speed { get; set; } = 500f;
 
+    public override void _Ready()
+    {
+        // Ensure camera processing stops when the scene tree is paused
+        // Use Inherit so the camera will not process while the tree is paused
+        ProcessMode = ProcessModeEnum.Inherit;
+    }
+
     public override void _Process(double delta)
     {
         Vector2 direction = Vector2.Zero;

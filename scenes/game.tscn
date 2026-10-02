@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://yrwtdykyj2kj" path="res://scripts/GameManager.cs" id="6_p57ef"]
 [ext_resource type="Script" uid="uid://8yiuxtys47hi" path="res://scripts/GameOverUI.cs" id="7_u5sy4"]
 [ext_resource type="Script" uid="uid://dpfuqmy5whtns" path="res://scripts/Economy/ResourceUI.cs" id="9_0tnpc"]
+[ext_resource type="PackedScene" uid="uid://bxy0ptq7wukqr" path="res://scenes/PauseMenu.tscn" id="10_vtaks"]
 
 [node name="Game" type="Node2D" unique_id=85277427]
 script = ExtResource("1_yqjtg")
@@ -262,3 +263,7 @@ offset_right = 113.0
 offset_bottom = 31.0
 max_value = 500.0
 show_percentage = false
+
+[node name="PauseMenu" parent="UI" unique_id=1378521355 instance=ExtResource("10_vtaks")]
+process_mode = 2
+visible = false

@@ -1,6 +1,6 @@
 using Godot;
 
-public partial class HQ : Node2D
+public partial class HQ : Node2D, IDamageable
 {
     private const int CellSize = 32;
     private const int SizeInCells = 3;

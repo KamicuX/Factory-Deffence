@@ -1,6 +1,6 @@
 using Godot;
 
-public partial class Wall : Node2D
+public partial class Wall : Node2D, IDamageable
 {
     private const int Size = 32;
     private const int MaxHealth = 200;
